@@ -64,6 +64,9 @@ public class HostInfo
      */
     private String focusJID;
 
+    private int minRoomTime = -1;
+
+    private int maxRoomTime = -1;
 
     /**
      * Instantiates a new <tt>HostInfo</tt> instance with default attribut. 
@@ -99,6 +102,22 @@ public class HostInfo
         this.useHTTPS = useHTTPS;
     }
 
+    public void setMinRoomTime(int minRoomTime) {
+        this.minRoomTime = minRoomTime;
+    }
+
+    public void setMaxRoomTime(int maxRoomTime) {
+        this.maxRoomTime = maxRoomTime;
+    }
+
+    public int getMinRoomTime() {
+
+        return minRoomTime;
+    }
+
+    public int getMaxRoomTime() {
+        return maxRoomTime;
+    }
 
     /**
      * Get the domain of the XMPP server of this <tt>HostInfo</tt>

@@ -143,6 +143,7 @@ public class FakeUser implements PacketListener
     private FakeUserStats fakeUserStats;
 
     private long userStartTime = 0;
+    int maxTimeInRoom = -1;
 
     /**
      * Construct the conference focus JID 
@@ -179,7 +180,7 @@ public class FakeUser implements PacketListener
         Hammer hammer,
         MediaDeviceChooser mdc)
     {
-        this(hammer, mdc, null, true);
+        this(hammer, mdc, null, -1, true);
     }
 
     /**
@@ -199,9 +200,10 @@ public class FakeUser implements PacketListener
         Hammer hammer,
         MediaDeviceChooser mdc,
         String nickname,
+        int maxTimeInRoom,
         boolean statisticsEnabled)
     {
-        this(hammer, mdc, nickname, false, statisticsEnabled);
+        this(hammer, mdc, nickname, maxTimeInRoom, false, statisticsEnabled);
     }
 
     /**
@@ -221,6 +223,7 @@ public class FakeUser implements PacketListener
         Hammer hammer,
         MediaDeviceChooser mdc,
         String nickname,
+        int maxTimeInRoom,
         boolean smackDebug,
         boolean statisticsEnabled)
     {   
@@ -229,6 +232,8 @@ public class FakeUser implements PacketListener
         this.mediaDeviceChooser = mdc;
         this.nickname = (nickname == null) ? "Anonymous" : nickname;
         this.conferenceInfo = hammer.getConferenceInfo();
+        this.maxTimeInRoom = maxTimeInRoom;
+
         fakeUserStats = statisticsEnabled ? new FakeUserStats(nickname) : null;
 
         config = new BOSHConfiguration(

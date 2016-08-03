@@ -34,6 +34,7 @@ import org.jitsi.util.Logger;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  *
@@ -223,10 +224,25 @@ public class Hammer
     }
 
     private FakeUser makeFakeUser(int index) {
+        // compute max time user should remain in room
+
+        int maxTimeInRoom = -1;
+        if (serverInfo.getMaxRoomTime() != -1) {
+            int minTime = serverInfo.getMinRoomTime() == -1 ? 0 : serverInfo.getMinRoomTime();
+            if (minTime > serverInfo.getMaxRoomTime()) {
+                logger.error("Illegal room time: max time must be greater than min: max time is: " + serverInfo.getMaxRoomTime() + "; min time is : " + serverInfo.getMinRoomTime());
+            } else {
+                maxTimeInRoom = ThreadLocalRandom.current().nextInt(minTime, serverInfo.getMaxRoomTime() + 1);
+            }
+        }
+
+        logger.info("user " + index + " will spend " + maxTimeInRoom + "ms in room");
+
         return new FakeUser(
                 this,
                 this.mediaDeviceChooser,
                 this.nickname+"_"+index,
+                maxTimeInRoom,
                 (hammerStats != null));
     }
 
@@ -431,12 +447,16 @@ public class Hammer
         }
     }
 
-    public void restartAnonymous(long maxAge) {
+    public void restartAnonymous() {
         try {
             ArrayList<Integer> restarts = new ArrayList<>();
 
+            long now = System.currentTimeMillis();
             for (int i = 0; i < fakeUsers.length; ++i) {
-                if (fakeUsers[i].isSessionInitiated() && (System.currentTimeMillis() - fakeUsers[i].getUserStartTime() > maxAge)) {
+                if (!fakeUsers[i].isSessionInitiated()) {
+                    continue;
+                }
+                if (fakeUsers[i].maxTimeInRoom != -1 && (now - fakeUsers[i].getUserStartTime()) > fakeUsers[i].maxTimeInRoom) {
                     restarts.add(i);
                     logger.info("Stopping fake user; obj id: " + fakeUsers[i].hashCode());
                     fakeUsers[i].stop();

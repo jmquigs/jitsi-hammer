@@ -83,6 +83,12 @@ public class CmdLineArguments
     @Option(name="-room",usage="The MUC room name")
     private String roomName = "TestHammer";
 
+    @Option(name="-minroomtime",usage="The mininum amount of time a user will stay in the room before reconnecting (must be lower than maxRoomTime) ")
+    private int minRoomTime = -1;
+
+    @Option(name="-maxroomtime",usage="The maximum amount of time a user will stay in the room before reconnecting (must be greater than minRoomTime) ")
+    private int maxRoomTime = -1;
+
     /**
      * The port used by the XMPP server.
      */
@@ -286,7 +292,14 @@ public class CmdLineArguments
         {
             hostInfo.setFocusJID(focusJID);
         }
-        
+
+        if (minRoomTime >= 0) {
+            hostInfo.setMinRoomTime(minRoomTime * 1000);
+        }
+        if (maxRoomTime >= 0) {
+            hostInfo.setMaxRoomTime(maxRoomTime * 1000);
+        }
+
         return hostInfo;
         
     }

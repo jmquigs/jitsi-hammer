@@ -302,7 +302,7 @@ public class Main
                         break;
                     }
 
-                    hammer.restartAnonymous(20000);
+                    hammer.restartAnonymous();
 
                     Thread.sleep(1000);
                 }
