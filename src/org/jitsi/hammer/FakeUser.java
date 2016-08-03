@@ -142,6 +142,8 @@ public class FakeUser implements PacketListener
      */
     private FakeUserStats fakeUserStats;
 
+    private long userStartTime = 0;
+
     /**
      * Construct the conference focus JID 
      * (or get one from the server info if provided)
@@ -157,6 +159,10 @@ public class FakeUser implements PacketListener
             focusJID = "focus." + this.serverInfo.getXMPPDomain();
         }
         return focusJID;
+    }
+
+    public long getUserStartTime() {
+        return userStartTime;
     }
 
     /**
@@ -282,6 +288,7 @@ public class FakeUser implements PacketListener
             IOException,
             XMPPException
     {
+        this.userStartTime = System.currentTimeMillis();
         logger.info(this.nickname + " : Login anonymously to the XMPP server.");
         connection.connect();
         connection.loginAnonymously();
@@ -299,6 +306,7 @@ public class FakeUser implements PacketListener
             IOException,
             XMPPException
     {
+        this.userStartTime = System.currentTimeMillis();
         logger.info(this.nickname + " : Login with username "
                 + username + " to the XMPP server.");
         connection.connect();
@@ -453,6 +461,10 @@ public class FakeUser implements PacketListener
         }
     }
 
+    public boolean isSessionInitiated() {
+        return sessionInitiate != null;
+    }
+
     /**
      * Stop and close all media stream
      * and disconnect from the MUC and the XMPP server
@@ -484,6 +496,8 @@ public class FakeUser implements PacketListener
                     );
                     if(muc != null) muc.leave();
                     connection.disconnect();
+
+                    sessionInitiate = null;
                 }
                 catch (SmackException.NotConnectedException e) {
                     logger.fatal("Not connected, so cannot properly " +
@@ -873,8 +887,9 @@ public class FakeUser implements PacketListener
             connection.sendPacket(ackPacket);
         }
         catch (SmackException.NotConnectedException e) {
-            logger.fatal("Cannot ACK Jingle session: not connected");
-            System.exit(1);
+            // JMQ: turn this into a warning since it occurs on a fake user when stopping it prior to room switch.
+            logger.warn("Cannot ACK Jingle session: not connected; user obj id: " + this.hashCode());
+            //System.exit(1);
         }
     }
 

@@ -285,6 +285,32 @@ public class Main
                 infoCLI.getAllStats(),
                 infoCLI.getSummaryStats(),
                 infoCLI.getStatsPolling());
+
+
+            long lastTime = System.currentTimeMillis();
+            long totalTime = 0;
+
+            if(infoCLI.getRunLength() > 0)
+            {
+                while (true) {
+                    long now = System.currentTimeMillis();
+                    long elapsed = now - lastTime;
+                    lastTime = now;
+
+                    totalTime += elapsed;
+                    if (totalTime > infoCLI.getRunLength() * 1000) {
+                        break;
+                    }
+
+                    hammer.restartAnonymous(20000);
+
+                    Thread.sleep(1000);
+                }
+            }
+            else
+            {
+                while(true) Thread.sleep(3600000);
+            }
         }
         catch (URISyntaxException e)
         {
@@ -295,17 +321,11 @@ public class Main
             e.printStackTrace();
             System.exit(-1);
         }
-        if(infoCLI.getRunLength() > 0)
-        {
-            Thread.sleep(infoCLI.getRunLength() * 1000);
-        }
-        else
-        {
-            while(true) Thread.sleep(3600000);
-        }
+
 
         //It's necessary to finish Main() with an exit, to trigger the shutdown
         //hook that will stop the hammer
+        System.out.println("Exiting");
         System.exit(0);
     }
 }

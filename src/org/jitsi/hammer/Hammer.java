@@ -181,7 +181,6 @@ public class Hammer
      */
     private boolean started = false;
 
-
     /**
      * Instantiate a <tt>Hammer</tt> object with <tt>numberOfUser</tt> virtual
      * users that will try to connect to the XMPP server and its videobridge
@@ -217,17 +216,19 @@ public class Hammer
 
         for(int i = 0; i<fakeUsers.length; i++)
         {
-            fakeUsers[i] = new FakeUser(
-                this,
-                this.mediaDeviceChooser,
-                this.nickname+"_"+i,
-                (hammerStats != null));
+            fakeUsers[i] = makeFakeUser(i);
         }
         logger.info(String.format("Hammer created : %d fake users were created"
             + " with a base nickname %s", numberOfUser, nickname));
     }
 
-
+    private FakeUser makeFakeUser(int index) {
+        return new FakeUser(
+                this,
+                this.mediaDeviceChooser,
+                this.nickname+"_"+index,
+                (hammerStats != null));
+    }
 
     /**
      * Initialize the Hammer by launching the OSGi Framework and
@@ -425,6 +426,33 @@ public class Hammer
         }
         catch (SmackException e)
         {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+    public void restartAnonymous(long maxAge) {
+        try {
+            ArrayList<Integer> restarts = new ArrayList<>();
+
+            for (int i = 0; i < fakeUsers.length; ++i) {
+                if (fakeUsers[i].isSessionInitiated() && (System.currentTimeMillis() - fakeUsers[i].getUserStartTime() > maxAge)) {
+                    restarts.add(i);
+                    logger.info("Stopping fake user; obj id: " + fakeUsers[i].hashCode());
+                    fakeUsers[i].stop();
+                    fakeUsers[i] = null;
+                }
+            }
+
+            if (restarts.size() > 0) {
+                Thread.sleep(1000);
+                for (int i : restarts) {
+                    fakeUsers[i] = makeFakeUser(i);
+                    fakeUsers[i].start();
+                }
+            }
+        }
+        catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
         }
