@@ -303,8 +303,6 @@ public class Main
                     }
 
                     hammer.restartAnonymous();
-
-                    Thread.sleep(1000);
                 }
             }
             else

@@ -474,17 +474,26 @@ public class Hammer
                     restarts.add(i);
                     logger.info("Stopping fake user; obj id: " + fakeUsers[i].hashCode());
                     fakeUsers[i].stop();
+                    logger.info("Finished stopping fake user: " + fakeUsers[i].hashCode());
                     fakeUsers[i] = null;
                 }
             }
 
+            logger.info("Stopped " + restarts.size() + " users");
+
             if (restarts.size() > 0) {
-                Thread.sleep(1000);
+                Thread.sleep(1000); // give them some time to clear out
                 for (int i : restarts) {
                     fakeUsers[i] = makeFakeUser(i);
                     fakeUsers[i].start();
+                    // space the restarts out a little, otherwise we seem to run into various kinds of initialization
+                    // race conditions in the hammer and jitsi stack
+                    Thread.sleep(500);
                 }
+            } else {
+                Thread.sleep(1000);
             }
+            logger.info("User restart complete");
         }
         catch (Exception e) {
             e.printStackTrace();
