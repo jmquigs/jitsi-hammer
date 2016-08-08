@@ -89,6 +89,9 @@ public class CmdLineArguments
     @Option(name="-maxroomtime",usage="The maximum amount of time a user will stay in the room before reconnecting (must be greater than minRoomTime) ")
     private int maxRoomTime = -1;
 
+    @Option(name="-numrooms",usage="The number of rooms to use.  If specified, the users will be partitioned into each of X rooms, which have the format RoomNameX where X is a number from 1..numrooms")
+    private int numRooms = -1;
+
     /**
      * The port used by the XMPP server.
      */
@@ -298,6 +301,9 @@ public class CmdLineArguments
         }
         if (maxRoomTime >= 0) {
             hostInfo.setMaxRoomTime(maxRoomTime * 1000);
+        }
+        if (numRooms > 0) {
+            hostInfo.setNumRooms(numRooms);
         }
 
         return hostInfo;

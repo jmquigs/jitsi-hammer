@@ -180,7 +180,7 @@ public class FakeUser implements PacketListener
         Hammer hammer,
         MediaDeviceChooser mdc)
     {
-        this(hammer, mdc, null, -1, true);
+        this(hammer, null, mdc, null, -1, true);
     }
 
     /**
@@ -198,12 +198,13 @@ public class FakeUser implements PacketListener
      */
     public FakeUser(
         Hammer hammer,
+        HostInfo hostInfo,
         MediaDeviceChooser mdc,
         String nickname,
         int maxTimeInRoom,
         boolean statisticsEnabled)
     {
-        this(hammer, mdc, nickname, maxTimeInRoom, false, statisticsEnabled);
+        this(hammer, hostInfo, mdc, nickname, maxTimeInRoom, false, statisticsEnabled);
     }
 
     /**
@@ -221,6 +222,7 @@ public class FakeUser implements PacketListener
      */
     public FakeUser(
         Hammer hammer,
+        HostInfo hostInfo,
         MediaDeviceChooser mdc,
         String nickname,
         int maxTimeInRoom,
@@ -228,7 +230,7 @@ public class FakeUser implements PacketListener
         boolean statisticsEnabled)
     {   
         this.hammer = hammer;
-        this.serverInfo = hammer.getServerInfo();
+        this.serverInfo = hostInfo != null ? hostInfo : hammer.getServerInfo();
         this.mediaDeviceChooser = mdc;
         this.nickname = (nickname == null) ? "Anonymous" : nickname;
         this.conferenceInfo = hammer.getConferenceInfo();

@@ -21,8 +21,11 @@ package org.jitsi.hammer.utils;
  *
  * @author Thomas Kuntz
  */
-public class HostInfo
+public class HostInfo implements Cloneable
 {
+    public HostInfo clone() throws CloneNotSupportedException {
+        return (HostInfo)super.clone();
+    }
 
     /**
      * The domain name of the XMPP server.
@@ -67,6 +70,8 @@ public class HostInfo
     private int minRoomTime = -1;
 
     private int maxRoomTime = -1;
+
+    private int numRooms = -1;
 
     /**
      * Instantiates a new <tt>HostInfo</tt> instance with default attribut. 
@@ -119,6 +124,14 @@ public class HostInfo
         return maxRoomTime;
     }
 
+    public int getNumRooms() {
+        return numRooms;
+    }
+
+    public void setNumRooms(int numRooms) {
+        this.numRooms = numRooms;
+    }
+
     /**
      * Get the domain of the XMPP server of this <tt>HostInfo</tt>
      * (in lower case).
@@ -158,6 +171,10 @@ public class HostInfo
     public String getRoomName()
     {
         return this.roomName.toLowerCase();
+    }
+
+    public void setRoomName(String name) {
+        this.roomName = name;
     }
 
     /**

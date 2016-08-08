@@ -236,10 +236,24 @@ public class Hammer
             }
         }
 
-        logger.info("user " + index + " will spend " + maxTimeInRoom + "ms in room");
+        // split users into rooms if requested
+        HostInfo hi = serverInfo;
+        if (serverInfo.getNumRooms() > 0) {
+            try {
+                hi = serverInfo.clone();
+                int ridx = (index % serverInfo.getNumRooms()) + 1;
+                hi.setRoomName(hi.getRoomName() + ridx);
+            } catch (CloneNotSupportedException e) {
+                logger.fatal(e);
+                System.exit(1);
+            }
+        }
+
+        logger.info("user " + index + " will spend " + maxTimeInRoom + "ms in room: " + hi.getRoomName());
 
         return new FakeUser(
                 this,
+                hi,
                 this.mediaDeviceChooser,
                 this.nickname+"_"+index,
                 maxTimeInRoom,
