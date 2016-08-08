@@ -224,7 +224,7 @@ public class HammerStats implements Runnable
                     }
 
                     delim = "";
-                    logger.info("Updating the MediaStreamStats");
+                    logger.trace("Updating the MediaStreamStats");
                     for(FakeUserStats stats : fakeUserStatsList)
                     {
                         //We update the stats before using/reading them.
@@ -241,7 +241,7 @@ public class HammerStats implements Runnable
 
                         if(summaryStatsLogging || overallStatsLogging)
                         {
-                            logger.info("Adding stats values from the"
+                            logger.trace("Adding stats values from the"
                                 + " MediaStreamStats to their"
                                 + " HammerSummaryStats objects");
                             audioSummaryStats.add(
@@ -312,7 +312,7 @@ public class HammerStats implements Runnable
 
                 if(summaryStatsLogging || overallStatsLogging)
                 {
-                    logger.info("Clearing the HammerSummaryStats by creating new"
+                    logger.trace("Clearing the HammerSummaryStats by creating new"
                         + " SummaryStats objects for each watched stats");
                     audioSummaryStats.clear();
                     videoSummaryStats.clear();
